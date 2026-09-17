@@ -52,7 +52,7 @@
 </nav>
 
 <div class="social top">
-  <a href="https://www.instagram.com/kinomori_s/"
+  <a href="https://www.instagram.com/kinomori_s/" data-ig="kinomori_s"
      target="_blank" rel="noopener noreferrer"
      aria-label="Kinomori on Instagram">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
@@ -83,7 +83,7 @@
 <p class="hint">Tap an image and pinch to zoom · Prices in dirhams (MAD)</p>
 
 <div class="social">
-  <a href="https://www.instagram.com/kinomori_s/"
+  <a href="https://www.instagram.com/kinomori_s/" data-ig="kinomori_s"
      target="_blank" rel="noopener noreferrer"
      aria-label="Kinomori on Instagram">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
@@ -103,6 +103,27 @@
 
 <script>
   document.getElementById('updated').textContent = 'Menu updated ' + new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+  // Instagram: en el móvil, abrir la APP directamente en el perfil (ahí está el
+  // botón Seguir a un toque). Si la app no está o no responde, se abre la web.
+  // Ojo: no existe forma de forzar el "seguir" desde una web; Instagram no lo
+  // permite, y lo que promete eso es phishing.
+  var esMovil = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+  document.querySelectorAll('a[data-ig]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (!esMovil) return;
+      e.preventDefault();
+      var abierto = false;
+      var marca = Date.now();
+      document.addEventListener('visibilitychange', function () { if (document.hidden) abierto = true; });
+      window.location.href = 'instagram://user?username=' + a.getAttribute('data-ig');
+      setTimeout(function () {
+        if (!abierto && !document.hidden && Date.now() - marca < 2000) {
+          window.location.href = a.href;   // plan B: el perfil en el navegador
+        }
+      }, 1200);
+    });
+  });
 </script>
 
 </body>
